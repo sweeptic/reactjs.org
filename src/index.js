@@ -15,7 +15,7 @@ function formatName(props) {
    return props.firstName + ' ' + props.lastName;
 }
 
-class Paragraph_h3 extends React.Component {
+class ParagraphH3 extends React.Component {
    render() { return <h3> Lorem ipsum dolor sit class.</h3> }
 }
 
@@ -105,13 +105,13 @@ class Clock extends React.Component {
 
 function ActionLink() {
 
-   function clickHandler(e) {
-      e.preventDefault();
-      alert('clicked')
-   }
+   // function clickHandler(e) {
+   //    e.preventDefault();
+   //    alert('clicked')
+   // }
    return (
       <div >
-         <a onClick={clickHandler} style={{ color: 'white' }} href="#"> Kattints rám</a>
+         {/* <a onClick={clickHandler} style={{ color: 'white' }} href="#"> Kattints rám</a> */}
       </div>
    )
 }
@@ -277,12 +277,15 @@ class Page extends Component {
          <div>
             <button onClick={this.toggleClick}>
                {this.state.showWarning ? 'Elrejtés' : 'Megjelenítés'}
+
             </button>
             <WarningBanner showWarning={this.state.showWarning} />
          </div>
       )
    }
 }
+
+
 
 function ListItems(props) {
    return (
@@ -300,9 +303,215 @@ function List1(props) {
       </ul>
    )
 }
-
 let arr = ['a', 'b', 'c', 'd']
 let messages = ['react', 'Re: react'];
+
+
+
+
+class NameForm extends Component {
+   state = {
+      value: 'kezdeti szoveg'
+   }
+   constructor(props) {
+      super(props)
+      this.onChangeSubmit = this.onChangeSubmit.bind(this);
+   }
+   onChangeText = (event) => {
+      this.setState({ value: event.target.value.toUpperCase() })
+      console.log(this)
+   }
+   onChangeSubmit(event) {
+      event.preventDefault();
+      let submitted = this.state.value;
+      alert(submitted);
+   }
+   render() {
+      return (
+         <form onSubmit={this.onChangeSubmit} action="">
+            <label htmlFor="">Name:
+         <input type="text" name="name" id="" onChange={this.onChangeText} value={this.state.value} />
+            </label>
+            <input type="submit" value="Submit" />
+         </form>
+      )
+   }
+}
+
+
+class SelectForm extends Component {
+
+   constructor(props) {
+      super(props)
+      this.state = {
+         value: 'pink'
+      }
+
+   }
+   onChangeSelect = (event) => {
+      this.setState({ value: event.target.value })
+   }
+   onChangeSubmit = (event) => {
+      event.preventDefault();
+      let submitted = this.state.value;
+      alert(submitted);
+   }
+   render() {
+      return (
+         <form onSubmit={this.onChangeSubmit} action="">
+            <label htmlFor="">Choose your favourite color
+        <select
+                  onChange={this.onChangeSelect}
+                  value={this.state.value} >
+                  <option value="black">black</option>
+                  <option value="white">white</option>
+                  <option value="blue">blue</option>
+                  <option value="orange">orange</option>
+                  <option value="pink">pink</option>
+               </select>
+            </label>
+            <input type="submit" value="Submit" />
+         </form>
+      )
+   }
+}
+
+
+class FileUpdate extends Component {
+   render() {
+      return (
+         <div>
+            <input type="file" name="" id="" />
+         </div>
+      )
+   }
+}
+
+
+class Reservation extends Component {
+   constructor(props) {
+      super(props);
+      this.state = { isGoing: true, numberOfGuests: 2 };
+   }
+
+
+   onChangeHandler = (event) => {
+      const target = event.target;
+      const value = target.name === 'isGoing' ? target.checked : target.value;
+      console.log(value)
+      const name = target.name;
+      this.setState({
+         [name]: value
+      })
+   }
+
+   render() {
+      return (
+         <form action="">
+            <label htmlFor="">IsGoing <input
+               type="checkbox"
+               name="isGoing"
+               checked={this.state.isGoing}
+               onChange={this.onChangeHandler} />
+            </label>
+            <br />
+            <label htmlFor="">Number Of Guests <input
+               type="number"
+               name="numberOfGuests"
+               value={this.state.numberOfGuests}
+               onChange={this.onChangeHandler} />
+            </label>
+         </form>
+      )
+   }
+}
+
+
+
+
+const BoilingVerdict = (props) => {
+   let status = props.temp > 100 ? 'forr' : 'nem forr'
+   return (
+      <div>
+         A víz éppen {status}
+      </div>
+   )
+}
+
+
+const scaleArr = {
+   c: 'Celsius',
+   f: 'Fahrenheit'
+}
+
+const TemperatureInput = (props) => {
+
+   function handleChange(e) {
+      props.onTemperatureChange(e.target.value)
+      console.log(props)
+   }
+
+   const temperature = props.value_;
+   const scale = props.scale;
+
+   return (
+      <div>
+         <label htmlFor="">Adja meg a homersekletet {scaleArr[scale]} értékben:
+         <input
+               value={temperature}
+               onChange={handleChange}
+               type="text"
+               name=""
+               id="" />
+         </label>
+
+      </div>
+   )
+}
+
+
+
+class Calculator extends Component {
+
+   state = {
+      temperature: '',
+      scale: 'c'
+   }
+
+   FahrenheitHandler = (temperature) => {
+      this.setState({ temperature: temperature, scale: 'f' })
+   }
+
+   CelsiusHandler = (temperature) => {
+      this.setState({ temperature: temperature, scale: 'c' })
+   }
+
+   render() {
+      const scale = this.state.scale;
+      const temperature = this.state.temperature;
+      const celsius = scale === 'f' ? temperature * 4.3 : temperature;
+      const fahrenheit = scale === 'c' ? temperature / 4.3 : temperature;
+
+      return (
+         <div>
+            <TemperatureInput
+               scale='c'
+               value_={celsius}
+               onTemperatureChange={this.CelsiusHandler} />
+
+            <TemperatureInput
+               scale='f'
+               value_={fahrenheit}
+               onTemperatureChange={this.FahrenheitHandler} />
+            <BoilingVerdict temp={temperature} />
+         </div>
+      )
+   }
+}
+
+
+
+
 
 ReactDOM.render(
    <React.StrictMode>
@@ -324,7 +533,7 @@ ReactDOM.render(
          {getGreetingUser(name)}
          <Clock />
          <Clock />
-         <Paragraph_h3 />
+         <ParagraphH3 />
          {element}
          {paragraph}
          <Welcome name="Gábor" />
@@ -338,12 +547,20 @@ ReactDOM.render(
          <Toggle />
          <List1 arr={arr} />
 
+         <NameForm />
+         <SelectForm />
+         <FileUpdate />
+         <Reservation />
+         <Calculator />
+
+
+
       </div>
 
 
 
 
-   </React.StrictMode>,
+   </React.StrictMode >,
    document.getElementById('root')
 
 
