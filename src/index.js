@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import Axios from 'axios';
 
 
 
@@ -511,6 +512,185 @@ class Calculator extends Component {
 
 
 
+function FancyBorder(props) {
+   // console.log(props)
+   return (
+      <div>
+         {props.children}
+      </div>
+   )
+}
+
+
+const SplitPane = (props) => {
+   console.log(props)
+   return (
+      <div>
+         {props.left}
+         {props.right}
+      </div>
+   )
+}
+
+
+function WelcomeDialog() {
+   return (
+      <div>
+         <FancyBorder>
+            <h1>udvozoljuk</h1>
+            <p>isten hozta Önt</p>
+         </FancyBorder>
+         <SplitPane
+            left={<p>contacts.....</p>}
+            right={<p>chat.....</p>}
+         />
+      </div>
+   )
+}
+
+function Dialog(props) {
+
+   return (
+      <div>
+         {props.message}
+         {props.title}
+         {props.children}
+      </div>
+   )
+}
+
+class SignUpDialog extends Component {
+   state = {
+      login: 'Peter'
+   }
+   textHandler = (event) => {
+      this.setState({ login: event.target.value })
+   }
+   loginHandler = () => { alert(`Udvozoljuk kedves ${this.state.login}`) }
+
+   render() {
+      const login = this.state.login
+      return (
+
+         <Dialog message="message" title="title">
+
+            <input
+               type="text"
+               name=""
+               onChange={this.textHandler}
+               value={login} />
+            <input
+               type="button"
+               value="Login"
+               onClick={this.loginHandler} />
+
+         </Dialog>
+      )
+   }
+}
+
+const axios = Axios.create({
+   baseURL: "https://react-http-cec91.firebaseio.com/"
+})
+
+
+
+
+function SearchBox(props) {
+   return (
+      <div
+         style={{
+            padding: '1rem',
+            margin: '1rem',
+            border: '1px solid white'
+         }}>
+         <label htmlFor="">Search item:
+         <input type="text" onChange={props.searchhandler} />
+         </label>
+      </div>
+   )
+}
+
+function ProductTable(props) {
+
+   const filterText = props.filterText;
+   const filteredDataRows = props.dataRows.filter(item => {
+      return item.body.includes(filterText)
+   });
+
+   return (
+      <div>
+         A darabszam: {filteredDataRows.length}
+         <ProductCategoryRow />
+         <ProductRow dataRows={filteredDataRows} />
+      </div>
+   )
+}
+
+function ProductCategoryRow() {
+   return (
+      <div>
+
+      </div>
+   )
+}
+
+function ProductRow(props) {
+
+   const dtRows = props.dataRows
+      .map((item, index) =>
+         <li
+            key={index}
+            style={{
+               padding: '1rem',
+               margin: '1rem',
+               border: '1px solid white'
+            }}>
+            {item.body}
+         </li>)
+   return (
+      <div>
+         {dtRows}
+      </div>
+   )
+}
+
+
+
+class FilteredProductTable extends Component {
+
+   state = {
+      data: [],
+      filterText: ''
+   }
+
+   componentDidMount() {
+      axios
+         .get('/posts.json')
+         .then((response) => {
+            const posts = response.data;
+            this.setState({ data: posts })
+         })
+   }
+
+   filterHandler = (event) => {
+      this.setState({
+         filterText: event.target.value
+      })
+   }
+
+   render() {
+      const dataRows = this.state.data;
+      const filterText = this.state.filterText;
+      return (
+         <div>
+            <SearchBox searchhandler={this.filterHandler} />
+            <ProductTable dataRows={dataRows} filterText={filterText} />
+         </div>
+      )
+   }
+}
+
 
 
 ReactDOM.render(
@@ -523,6 +703,10 @@ ReactDOM.render(
          backgroundColor: '#282c34'
       }}>
 
+         <FilteredProductTable />
+
+         <SignUpDialog />
+         <WelcomeDialog />
          <Page />
          <LoginControl />
          <Mailbox unreadMessages={messages} />
